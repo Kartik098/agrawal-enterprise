@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme inline {
+  --font-sans: 'Geist', 'Arial', sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-lg: 1rem;
+  --radius-md: .75rem;
+}
+:root { --background: #f8fbff; --foreground: #183b6b; --card: #ffffff; --card-foreground: #183b6b; --primary: #3b82c4; --primary-foreground: #ffffff; --secondary: #fff1e8; --muted: #edf6ff; --muted-foreground: #6689b5; --border: #cfe3f6; --ring: #f97316; }
+* { @apply border-border; }
+html { background: var(--background); }
+body { @apply bg-background text-foreground font-sans antialiased; }
+button, a, input, select { @apply outline-none; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { @apply ring-2 ring-orange-500 ring-offset-2; }
+.section-shell { @apply mx-auto w-[80%] px-4 sm:px-6 lg:px-8; }
+.grid-pattern { background-image: linear-gradient(#d8eafb 1px, transparent 1px), linear-gradient(90deg, #d8eafb 1px, transparent 1px); background-size: 28px 28px; }
+@keyframes float-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes soft-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.animate-float-in { animation: float-in .5s ease both; }
+.animate-shimmer { background: linear-gradient(90deg, #edf6ff 25%, #ffffff 50%, #edf6ff 75%); background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+.animate-soft-pulse { animation: soft-pulse 1.8s ease-in-out infinite; }
+button, a { transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+button:active, a:active { transform: scale(.98); }
+::-webkit-scrollbar { width: 9px; } ::-webkit-scrollbar-thumb { background: #9fc4e6; border-radius: 9px; }

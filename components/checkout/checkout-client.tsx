@@ -82,7 +82,7 @@ export function CheckoutClient() {
       }
 
       // Step 1: Create Razorpay order
-      console.log('Creating Razorpay order...')
+      
       const razorpayOrder = await createRazorpayOrder({
         amount: total,
         currency: 'INR',
@@ -93,7 +93,7 @@ export function CheckoutClient() {
       })
 
       // Step 2: Open Razorpay checkout
-      console.log('Opening Razorpay checkout...')
+      
       await openRazorpayCheckout({
         key: RAZORPAY_KEY_ID,
         order_id: razorpayOrder.id,
@@ -105,14 +105,13 @@ export function CheckoutClient() {
         customer_email: user.email,
         customer_phone: user.phone,
         onSuccess: async (response) => {
-          console.log('Payment successful, verifying...', response)
+          
           // Step 3: Verify payment on backend
           try {
             const verification = await verifyRazorpayPayment(response, orderData)
             
             if (verification.success) {
               // Payment verified - order created
-              console.log('Payment verified, order created:', verification.orderId)
               
               // Clear cart
               await cartService.clear(user.id)

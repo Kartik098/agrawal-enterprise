@@ -76,7 +76,7 @@ export default function NewProductPage() {
     })
     return
   }
-debugger
+
   // 2. Subcategory is mandatory
   if (!subcategoryId) {
     setToast({

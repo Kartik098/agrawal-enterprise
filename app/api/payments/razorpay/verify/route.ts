@@ -295,8 +295,7 @@ async function sendOrderNotificationToAdmin(
   // For now, we'll log this. Implement email service as needed
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@agrawal-enterprise.com'
   
-  console.log(`[NEW ORDER NOTIFICATION] Order #${orderId} from user ${userId}`)
-  console.log(`Items: ${itemCount}, Total: ₹${totalAmount}`)
+  
 
   // TODO: Integrate with email service (Resend, SendGrid, etc.)
   // Example:

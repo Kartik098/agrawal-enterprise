@@ -563,7 +563,7 @@ export function Footer({
           <div>
             <div className="flex items-center gap-2 text-lg font-black text-blue-700">
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-orange-500 text-sm text-white">
-                AG
+                AE
               </span>
 
               Agrawal Enterprise

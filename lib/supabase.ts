@@ -20,6 +20,7 @@ export const STORAGE_BUCKETS = {
   PRODUCTS: 'product-images',
   BRANDS: 'brand-logos',
   VIDEOS: 'storefront-videos',
+  CAROUSEL: 'carousel-images',
 }
 
 // Helper: get public URL for a storage path

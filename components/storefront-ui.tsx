@@ -12,7 +12,8 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { useCart } from '@/hooks/useData'
 import { productsService } from '@/services/products'
-import type { Product, Brand, Category, Subcategory } from '@/types/database'
+import { carouselsService } from '@/services/carousels'
+import type { Product, Brand, Category, Subcategory, CarouselItem } from '@/types/database'
 
 export function formatCurrency(value: number): string {
   return `\u20B9${value.toLocaleString('en-IN')}`
@@ -158,17 +159,42 @@ export function CartButton() {
    HERO CAROUSEL
    ========================================================= */
 
-const slides = [
-  '/Images/Bumchums-TShirt.webp',
-  '/Images/Bumchums-Shorts.webp',
-  '/Images/Bumchums-Crew-Neck-t-Shirt2.webp',
-  '/Images/Bumchums-Crew-Neck-t-Shirt.webp',
-  '/Images/Bumchums-Crew-Neck-t-Shirt-comfort.webp',
+interface HeroSlide {
+  id: string | number
+  image_url: string
+  brand_slug: string | null
+  title: string
+}
+
+const DEFAULT_SLIDES: HeroSlide[] = [
+  { id: '1', image_url: '/Images/Bumchums-TShirt.webp', brand_slug: null, title: 'Bumchums T-Shirt' },
+  { id: '2', image_url: '/Images/Bumchums-Shorts.webp', brand_slug: null, title: 'Bumchums Shorts' },
+  { id: '3', image_url: '/Images/Bumchums-Crew-Neck-t-Shirt2.webp', brand_slug: null, title: 'Bumchums Crew Neck' },
+  { id: '4', image_url: '/Images/Bumchums-Crew-Neck-t-Shirt.webp', brand_slug: null, title: 'Bumchums Crew Neck' },
+  { id: '5', image_url: '/Images/Bumchums-Crew-Neck-t-Shirt-comfort.webp', brand_slug: null, title: 'Bumchums Comfort' },
 ]
 
 export function HeroCarousel() {
+  const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_SLIDES)
   const [index, setIndex] = useState(0)
   const total = slides.length
+
+  useEffect(() => {
+    carouselsService.getActive().then(data => {
+      if (data && data.length > 0) {
+        setSlides(
+          data.map(item => ({
+            id: item.id,
+            image_url: item.image_url,
+            brand_slug: item.brand?.slug || null,
+            title: item.title || 'Hero slide',
+          }))
+        )
+      }
+    }).catch(err => {
+      console.error('Error fetching hero carousel slides:', err)
+    })
+  }, [])
 
   const next = () => {
     setIndex(i => (i + 1) % total)
@@ -177,27 +203,19 @@ export function HeroCarousel() {
   const prev = () => {
     setIndex(i => (i - 1 + total) % total)
   }
-    
-  // Auto-advance every 3 seconds using setTimeout.
-  // Runs fresh after every index change (including manual clicks).
+
   useEffect(() => {
+    if (total === 0) return
     const timer = setTimeout(() => {
       setIndex(i => (i + 1) % total)
     }, 3000)
     return () => clearTimeout(timer)
-  }, [index]) // re-schedules whenever index changes
+  }, [index, total])
+
+  if (total === 0) return null
 
   return (
     <section className="relative w-full overflow-hidden">
-
-      {/*
-        THE FIX:
-        - Outer wrapper: overflow-hidden, full width — acts as the viewport
-        - Inner flex strip: total width = slides.length × 100% of the viewport
-          so each slide occupies exactly one viewport-width slot
-        - translateX moves by multiples of (100% / slides.length) of the strip,
-          which equals exactly one viewport width per step
-      */}
       <div
         className="flex transition-transform duration-700 ease-in-out"
         style={{
@@ -205,19 +223,27 @@ export function HeroCarousel() {
           transform: `translateX(-${(index * 100) / total}%)`,
         }}
       >
-       
-        {slides.map((image, i) => (
-          <div
-            key={image}
-            style={{ width: `${100 / total}%` }}
-          >
+        {slides.map((slide, i) => {
+          const content = (
             <img
-              src={image}
-              alt={`Hero slide ${i + 1}`}
+              src={slide.image_url}
+              alt={slide.title || `Hero slide ${i + 1}`}
               className="block h-auto w-full"
             />
-          </div>
-        ))}
+          )
+
+          return (
+            <div key={slide.id} style={{ width: `${100 / total}%` }}>
+              {slide.brand_slug ? (
+                <Link href={`/brands/${slide.brand_slug}`} className="block w-full">
+                  {content}
+                </Link>
+              ) : (
+                content
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Previous button */}
@@ -256,7 +282,6 @@ export function HeroCarousel() {
           />
         ))}
       </div>
-
     </section>
   )
 }

@@ -60,7 +60,7 @@ export default async function Home() {
       {/* Sale banner */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl bg-blue-600 px-8 py-16 text-center text-white">
-          <p className="text-sm font-bold uppercase tracking-widest text-blue-300">Limited time</p>
+          <p className="text-xl font-bold uppercase tracking-widest text-blue-300">Clearance Sale</p>
           <h2 className="mt-3 text-4xl font-black sm:text-5xl">Up to 40% off <br className="hidden sm:block" />this weekend only.</h2>
           <p className="mt-4 text-blue-200">On selected styles across all categories. While stocks last.</p>
           <Link href="/products" className="mt-8 inline-flex rounded-full bg-orange-500 px-8 py-3 font-bold text-white shadow-lg hover:bg-orange-600">Shop the sale</Link>

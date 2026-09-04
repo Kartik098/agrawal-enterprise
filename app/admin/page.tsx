@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { BarChart3, Bell, Boxes, CircleDollarSign, ClipboardList, FolderTree, LayoutDashboard, Menu, Package, Search, Settings, ShoppingBag, Tag, Users, X, TrendingUp, TrendingDown, ArrowRight, Film } from 'lucide-react'
+import { BarChart3, Bell, Boxes, CircleDollarSign, ClipboardList, FolderTree, LayoutDashboard, Menu, Package, Search, Settings, ShoppingBag, Tag, Users, X, TrendingUp, TrendingDown, ArrowRight, Film, Images } from 'lucide-react'
 import { analyticsService } from '@/services/analytics'
 import { ordersService } from '@/services/orders'
 import { formatCurrency } from '@/components/storefront-ui'
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { label: 'Categories', icon: FolderTree, href: '/admin/categories' },
   { label: 'Subcategories', icon: FolderTree, href: '/admin/subcategories' },
   { label: 'Videos', icon: Film, href: '/admin/videos' },
+  { label: 'Carousel', icon: Images, href: '/admin/carousels' },
   { label: 'Customers', icon: Users, href: '/admin/customers' },
   { label: 'Notifications', icon: Bell, href: '/admin/notifications' },
   { label: 'Analytics', icon: BarChart3, href: '/admin/analytics' },

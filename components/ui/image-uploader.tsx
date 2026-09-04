@@ -20,7 +20,7 @@ interface ImageUploaderProps {
   label?: string
 }
 
-export function ImageUploader({ images, onChange, maxImages = 10, label = 'Product images' }: ImageUploaderProps) {
+export function ImageUploader({ images = [], onChange, maxImages = 10, label = 'Product images' }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 

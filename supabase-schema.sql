@@ -461,4 +461,29 @@ alter table public.push_subscriptions enable row level security;
 create policy "Users manage own push subscriptions" on public.push_subscriptions
   for all using (user_id = auth.uid());
 
+-- =====================
+-- HOME CAROUSEL
+-- =====================
+
+create table if not exists public.carousels (
+  id serial primary key,
+  title text,
+  image_url text not null,
+  brand_id int references public.brands(id) on delete set null,
+  sort_order int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_carousels_brand_id on public.carousels(brand_id);
+
+alter table public.carousels enable row level security;
+
+create policy "Public read active carousels" on public.carousels for select using (is_active = true);
+create policy "Admin all carousels" on public.carousels for all using (
+  exists (select 1 from users where id = auth.uid() and is_admin = true)
+);
+
+
 

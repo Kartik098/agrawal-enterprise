@@ -17,7 +17,7 @@ const steps = ['Address', 'Payment', 'Review']
 
 export function CheckoutClient() {
   const router = useRouter()
-  const { user, loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const { cart, loading: cartLoading, refetch } = useCart(user?.id || null)
   const [step, setStep] = useState(0)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -87,9 +87,9 @@ export function CheckoutClient() {
         amount: total,
         currency: 'INR',
         receipt: `order-${user.id}-${Date.now()}`,
-        customer_name: user.full_name || 'Customer',
-        customer_email: user.email,
-        customer_phone: user.phone || undefined,
+        customer_name: profile?.full_name || user.user_metadata?.full_name || 'Customer',
+        customer_email: user.email || '',
+        customer_phone: profile?.phone || user.user_metadata?.phone || undefined,
       })
 
       // Step 2: Open Razorpay checkout
@@ -101,9 +101,9 @@ export function CheckoutClient() {
         currency: 'INR',
         name: 'Agrawal Enterprise',
         description: `Order for ${user.email}`,
-        customer_name: user.full_name || 'Customer',
-        customer_email: user.email,
-        customer_phone: user.phone,
+        customer_name: profile?.full_name || user.user_metadata?.full_name || 'Customer',
+        customer_email: user.email || '',
+        customer_phone: profile?.phone || user.user_metadata?.phone || undefined,
         onSuccess: async (response) => {
           
           // Step 3: Verify payment on backend
@@ -118,7 +118,7 @@ export function CheckoutClient() {
               await refetch()
               
               // Show confirmation
-              setOrderId(verification.orderId)
+              setOrderId(verification.orderId ?? null)
               setPlaced(true)
               setPlacing(false)
             } else {

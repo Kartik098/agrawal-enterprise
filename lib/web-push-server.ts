@@ -24,7 +24,7 @@ export async function sendPushToUser(
   try {
     const { data: subs, error } = await supabaseAdmin
       .from('push_subscriptions')
-      .select('*')
+      .select('id, endpoint, p256dh, auth')
       .eq('user_id', userId)
 
     if (error || !subs || subs.length === 0) return

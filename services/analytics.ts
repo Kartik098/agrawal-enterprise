@@ -66,7 +66,7 @@ export const analyticsService = {
   async getTopProducts(limit = 5): Promise<{ product_id: number; name: string; total_sold: number; revenue: number }[]> {
     const { data } = await supabase
       .from('order_items')
-      .select('product_id, quantity, total_price, product:products(name)')
+      .select('product_id, quantity, total_price, product:products(id, name)')
       .limit(500)
 
     if (!data) return []
@@ -95,7 +95,7 @@ export const analyticsService = {
   async getCategoryRevenue(): Promise<{ category: string; revenue: number }[]> {
     const { data } = await supabase
       .from('order_items')
-      .select('total_price, product:products(category:categories(name))')
+      .select('total_price, product:products(id, category_id, category:categories(id, name))')
       .limit(500)
 
     if (!data) return []

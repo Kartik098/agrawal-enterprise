@@ -14,6 +14,9 @@ export interface CategoryFilters {
   pageSize?: number
 }
 
+const CATEGORY_COLS = 'id, name, slug, description, image, is_active, created_at, updated_at'
+const SUBCATEGORY_COLS = 'id, category_id, name, slug, description, image, is_active, created_at, updated_at, category:categories(id, name, slug)'
+
 async function getReferenceCounts(categoryIds: number[]) {
   const empty = new Map<number, { subcategory_count: number; product_count: number }>()
   categoryIds.forEach(id => empty.set(id, { subcategory_count: 0, product_count: 0 }))
@@ -47,7 +50,7 @@ export const categoriesService = {
 
     let query = supabase
       .from('categories')
-      .select('*', { count: 'exact' })
+      .select(CATEGORY_COLS, { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, from + pageSize - 1)
 
@@ -75,7 +78,7 @@ export const categoriesService = {
   async getAll(): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
-      .select('*')
+      .select(CATEGORY_COLS)
       .order('name')
     if (error) throw error
     return data
@@ -84,7 +87,7 @@ export const categoriesService = {
   async getActive(): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
-      .select('*')
+      .select(CATEGORY_COLS)
       .eq('is_active', true)
       .order('name')
     if (error) throw error
@@ -94,7 +97,7 @@ export const categoriesService = {
   async getBySlug(slug: string): Promise<Category | null> {
     const { data, error } = await supabase
       .from('categories')
-      .select('*')
+      .select(CATEGORY_COLS)
       .eq('slug', slug)
       .single()
     if (error) return null
@@ -104,7 +107,7 @@ export const categoriesService = {
   async getCategoryById(id: number): Promise<Category | null> {
     const { data, error } = await supabase
       .from('categories')
-      .select('*')
+      .select(CATEGORY_COLS)
       .eq('id', id)
       .maybeSingle()
     if (error) throw error
@@ -133,7 +136,7 @@ export const categoriesService = {
       image = await uploadFile(STORAGE_BUCKETS.PRODUCTS, uploadedPath, imageFile)
     }
 
-    const { data, error } = await supabase.from('categories').insert({ ...cat, image }).select().single()
+    const { data, error } = await supabase.from('categories').insert({ ...cat, image }).select(CATEGORY_COLS).single()
     if (error) {
       if (uploadedPath) await deleteFile(STORAGE_BUCKETS.PRODUCTS, uploadedPath).catch(() => {})
       throw error
@@ -156,7 +159,7 @@ export const categoriesService = {
       .from('categories')
       .update({ ...cat, image, updated_at: new Date().toISOString() })
       .eq('id', id)
-      .select()
+      .select(CATEGORY_COLS)
       .single()
     if (error) {
       if (uploadedPath) await deleteFile(STORAGE_BUCKETS.PRODUCTS, uploadedPath).catch(() => {})
@@ -204,21 +207,21 @@ export const subcategoriesService = {
   async getAll(): Promise<Subcategory[]> {
     const { data, error } = await supabase
       .from('subcategories')
-      .select('*, category:categories(*)')
+      .select(SUBCATEGORY_COLS)
       .order('name')
     if (error) throw error
-    return data
+    return (data as unknown as Subcategory[]) || []
   },
 
   async getByCategory(categoryId: number): Promise<Subcategory[]> {
     const { data, error } = await supabase
       .from('subcategories')
-      .select('*, category:categories(*)')
+      .select(SUBCATEGORY_COLS)
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .order('name')
     if (error) throw error
-    return data
+    return (data as unknown as Subcategory[]) || []
   },
 
   async create(sub: Omit<Subcategory, 'id' | 'created_at' | 'updated_at' | 'category'>, imageFile?: File): Promise<Subcategory> {
@@ -232,13 +235,13 @@ export const subcategoriesService = {
     const { data, error } = await supabase
       .from('subcategories')
       .insert({ ...sub, image })
-      .select('*, category:categories(*)')
+      .select(SUBCATEGORY_COLS)
       .single()
     if (error) {
       if (uploadedPath) await deleteFile(STORAGE_BUCKETS.PRODUCTS, uploadedPath).catch(() => {})
       throw error
     }
-    return data
+    return data as unknown as Subcategory
   },
 
   async update(id: number, sub: Partial<Subcategory>, imageFile?: File): Promise<Subcategory> {
@@ -256,7 +259,7 @@ export const subcategoriesService = {
       .from('subcategories')
       .update({ ...sub, image, updated_at: new Date().toISOString() })
       .eq('id', id)
-      .select('*, category:categories(*)')
+      .select(SUBCATEGORY_COLS)
       .single()
     if (error) {
       if (uploadedPath) await deleteFile(STORAGE_BUCKETS.PRODUCTS, uploadedPath).catch(() => {})
@@ -265,7 +268,7 @@ export const subcategoriesService = {
     if (oldImage && oldImage !== image) {
       await deleteFile(STORAGE_BUCKETS.PRODUCTS, pathFromUrl(oldImage, STORAGE_BUCKETS.PRODUCTS)).catch(() => {})
     }
-    return data
+    return data as unknown as Subcategory
   },
 
   async delete(id: number): Promise<void> {

@@ -1,11 +1,13 @@
 import { supabase, uploadFile, deleteFile, pathFromUrl, STORAGE_BUCKETS } from '@/lib/supabase'
 import type { Brand } from '@/types/database'
 
+const BRAND_COLS = 'id, name, slug, logo, description, is_active, created_at, updated_at'
+
 export const brandsService = {
   async getAll(): Promise<Brand[]> {
     const { data, error } = await supabase
       .from('brands')
-      .select('*')
+      .select(BRAND_COLS)
       .order('name')
     if (error) throw error
     return data
@@ -14,7 +16,7 @@ export const brandsService = {
   async getActive(): Promise<Brand[]> {
     const { data, error } = await supabase
       .from('brands')
-      .select('*')
+      .select(BRAND_COLS)
       .eq('is_active', true)
       .order('name')
     if (error) throw error
@@ -24,7 +26,7 @@ export const brandsService = {
   async getBySlug(slug: string): Promise<Brand | null> {
     const { data, error } = await supabase
       .from('brands')
-      .select('*')
+      .select(BRAND_COLS)
       .eq('slug', slug)
       .single()
     if (error) return null

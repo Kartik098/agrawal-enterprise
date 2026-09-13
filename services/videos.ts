@@ -1,12 +1,14 @@
 import { supabase, uploadFile, deleteFile, pathFromUrl, STORAGE_BUCKETS } from '@/lib/supabase'
 import type { Video } from '@/types/database'
 
+const VIDEO_COLS = 'id, slot, video_url, source_type, is_active, created_at, updated_at'
+
 export const videosService = {
   // Get all videos (admin only)
   async getAll(): Promise<Video[]> {
     const { data, error } = await supabase
       .from('videos')
-      .select('*')
+      .select(VIDEO_COLS)
       .order('slot')
     if (error) throw error
     return data
@@ -16,7 +18,7 @@ export const videosService = {
   async getActive(): Promise<Video[]> {
     const { data, error } = await supabase
       .from('videos')
-      .select('*')
+      .select(VIDEO_COLS)
       .eq('is_active', true)
       .order('slot')
     if (error) throw error
@@ -27,7 +29,7 @@ export const videosService = {
   async getBySlot(slot: number): Promise<Video | null> {
     const { data, error } = await supabase
       .from('videos')
-      .select('*')
+      .select(VIDEO_COLS)
       .eq('slot', slot)
       .single()
     if (error) return null

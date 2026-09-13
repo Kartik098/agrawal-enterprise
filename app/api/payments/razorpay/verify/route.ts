@@ -100,15 +100,36 @@ export async function POST(req: NextRequest) {
 
     // Create the order with payment verification
     const ORDER_SELECT = `
-      *,
+      id,
+      user_id,
+      address_id,
+      coupon_id,
+      status,
+      payment_status,
+      payment_method,
+      payment_id,
+      subtotal,
+      discount_amount,
+      delivery_charge,
+      total_amount,
+      notes,
+      created_at,
+      updated_at,
       user:users(id, full_name, email, phone),
-      address:addresses(*),
-      coupon:coupons(*),
+      address:addresses(id, user_id, label, full_name, phone, line1, line2, city, state, pincode, is_default, created_at),
+      coupon:coupons(id, code, discount_type, discount_value, min_order_amount, max_discount_amount),
       order_items(
-        *,
-        product:products(id, name, slug, sku, product_images(*)),
-        product_size:product_sizes(*, size:sizes(*)),
-        product_color:product_colors(*, color:colors(*))
+        id,
+        order_id,
+        product_id,
+        product_size_id,
+        product_color_id,
+        quantity,
+        unit_price,
+        total_price,
+        product:products(id, name, slug, sku, product_images(id, image_url, is_primary)),
+        product_size:product_sizes(id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)),
+        product_color:product_colors(id, product_id, color_id, color:colors(id, name, hex_code))
       )
     `
 

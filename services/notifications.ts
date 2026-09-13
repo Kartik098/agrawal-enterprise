@@ -8,6 +8,8 @@ export interface NotificationFilters {
   pageSize?: number
 }
 
+const NOTIFICATION_COLS = 'id, user_id, type, title, message, entity_type, entity_id, is_read, created_at, read_at'
+
 export const notificationsService = {
   async getAll(
     userId: string,
@@ -17,7 +19,7 @@ export const notificationsService = {
 
     let query = supabase
       .from('notifications')
-      .select('*', { count: 'exact' })
+      .select(NOTIFICATION_COLS, { count: 'exact' })
       .eq('user_id', userId)
 
     if (type) {
@@ -46,7 +48,7 @@ export const notificationsService = {
   ): Promise<Notification | null> {
     const { data, error } = await supabase
       .from('notifications')
-      .select('*')
+      .select(NOTIFICATION_COLS)
       .eq('id', id)
       .eq('user_id', userId)
       .single()
@@ -58,7 +60,7 @@ export const notificationsService = {
   async getUnreadCount(userId: string): Promise<number> {
     const { count, error } = await supabase
       .from('notifications')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('is_read', false)
 
@@ -79,7 +81,7 @@ export const notificationsService = {
       })
       .eq('id', id)
       .eq('user_id', userId)
-      .select()
+      .select(NOTIFICATION_COLS)
       .single()
 
     if (error) throw error
@@ -109,7 +111,7 @@ export const notificationsService = {
     const { data, error } = await supabase
       .from('notifications')
       .insert(notification)
-      .select()
+      .select(NOTIFICATION_COLS)
       .single()
 
     if (error) throw error

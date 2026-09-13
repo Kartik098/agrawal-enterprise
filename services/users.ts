@@ -39,11 +39,14 @@ export const authService = {
     })
   },
 }
+const USER_COLS = 'id, email, full_name, phone, is_admin, is_active, created_at, updated_at'
+const ADDRESS_COLS = 'id, user_id, label, full_name, phone, line1, line2, city, state, pincode, is_default, created_at'
+
 export const usersService = {
   async getProfile(userId: string): Promise<User | null> {
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select(USER_COLS)
       .eq('id', userId)
       .single()
     if (error) return null
@@ -55,7 +58,7 @@ export const usersService = {
       .from('users')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', userId)
-      .select()
+      .select(USER_COLS)
       .single()
     if (error) throw error
     return data
@@ -64,7 +67,7 @@ export const usersService = {
   async getAllCustomers(): Promise<User[]> {
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select(USER_COLS)
       .eq('is_admin', false)
       .order('created_at', { ascending: false })
     if (error) throw error
@@ -85,7 +88,7 @@ export const addressesService = {
   async getAll(userId: string): Promise<Address[]> {
     const { data, error } = await supabase
       .from('addresses')
-      .select('*')
+      .select(ADDRESS_COLS)
       .eq('user_id', userId)
       .order('is_default', { ascending: false })
     if (error) throw error
@@ -100,7 +103,7 @@ export const addressesService = {
     const { data, error } = await supabase
       .from('addresses')
       .insert({ ...address, user_id: userId })
-      .select()
+      .select(ADDRESS_COLS)
       .single()
     if (error) throw error
     return data
@@ -114,7 +117,7 @@ export const addressesService = {
       .from('addresses')
       .update(updates)
       .eq('id', id)
-      .select()
+      .select(ADDRESS_COLS)
       .single()
     if (error) throw error
     return data

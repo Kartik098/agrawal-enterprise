@@ -2,15 +2,36 @@ import { supabase } from '@/lib/supabase'
 import type { Order, OrderItem, Address, Cart, Coupon } from '@/types/database'
 
 const ORDER_SELECT = `
-  *,
+  id,
+  user_id,
+  address_id,
+  coupon_id,
+  status,
+  payment_status,
+  payment_method,
+  payment_id,
+  subtotal,
+  discount_amount,
+  delivery_charge,
+  total_amount,
+  notes,
+  created_at,
+  updated_at,
   user:users(id, full_name, email, phone),
-  address:addresses(*),
-  coupon:coupons(*),
+  address:addresses(id, user_id, label, full_name, phone, line1, line2, city, state, pincode, is_default, created_at),
+  coupon:coupons(id, code, discount_type, discount_value, min_order_amount, max_discount_amount),
   order_items(
-    *,
-    product:products(id, name, slug, sku, product_images(*)),
-    product_size:product_sizes(*, size:sizes(*)),
-    product_color:product_colors(*, color:colors(*))
+    id,
+    order_id,
+    product_id,
+    product_size_id,
+    product_color_id,
+    quantity,
+    unit_price,
+    total_price,
+    product:products(id, name, slug, sku, product_images(id, image_url, is_primary)),
+    product_size:product_sizes(id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)),
+    product_color:product_colors(id, product_id, color_id, color:colors(id, name, hex_code))
   )
 `
 
@@ -36,7 +57,7 @@ export const ordersService = {
       .order('created_at', { ascending: false })
       .range(from, from + pageSize - 1)
     if (error) throw error
-    return { data: data || [], count: count || 0 }
+    return { data: (data as unknown as Order[]) || [], count: count || 0 }
   },
 
   async getByUser(userId: string): Promise<Order[]> {
@@ -46,7 +67,7 @@ export const ordersService = {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
     if (error) throw error
-    return data || []
+    return (data as unknown as Order[]) || []
   },
 
   async getById(id: number): Promise<Order | null> {
@@ -56,7 +77,7 @@ export const ordersService = {
       .eq('id', id)
       .single()
     if (error) return null
-    return data
+    return data as unknown as Order
   },
 
   async place(input: PlaceOrderInput): Promise<Order> {
@@ -107,7 +128,7 @@ export const ordersService = {
       await supabase.rpc('increment_coupon_usage', { p_coupon_id: input.couponId }).maybeSingle()
     }
 
-    return order
+    return order as unknown as Order
   },
 
   async updateStatus(id: number, status: Order['status']): Promise<void> {
@@ -129,19 +150,21 @@ export const ordersService = {
   async getRecentOrders(limit = 10): Promise<Order[]> {
     const { data, error } = await supabase
       .from('orders')
-      .select('*, user:users(full_name, email), order_items(id)')
+      .select('id, user_id, status, payment_status, total_amount, created_at, user:users(id, full_name, email), order_items(id)')
       .order('created_at', { ascending: false })
       .limit(limit)
     if (error) throw error
-    return data || []
+    return (data as unknown as Order[]) || []
   },
 }
+
+const COUPON_COLS = 'id, code, discount_type, discount_value, min_order_amount, max_discount_amount, usage_limit, used_count, is_active, expires_at, created_at'
 
 export const couponsService = {
   async validate(code: string, subtotal: number): Promise<{ valid: boolean; coupon?: Coupon; error?: string }> {
     const { data, error } = await supabase
       .from('coupons')
-      .select('*')
+      .select(COUPON_COLS)
       .eq('code', code.toUpperCase())
       .eq('is_active', true)
       .single()
@@ -176,7 +199,7 @@ export const couponsService = {
   },
 
   async getAll(): Promise<Coupon[]> {
-    const { data, error } = await supabase.from('coupons').select('*').order('created_at', { ascending: false })
+    const { data, error } = await supabase.from('coupons').select(COUPON_COLS).order('created_at', { ascending: false })
     if (error) throw error
     return data || []
   },

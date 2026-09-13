@@ -3,14 +3,26 @@ import type { Product, ProductImage, ProductSize, ProductColor } from '@/types/d
 
 // Full product select with all relations
 const PRODUCT_FULL = `
-  *,
-  category:categories(*),
-  subcategory:subcategories(*),
-  brand:brands(*),
-  product_images(*),
-  product_sizes(*, size:sizes(*)),
-  product_colors(*, color:colors(*)),
-  inventory(*, product_size:product_sizes(*, size:sizes(*)), product_color:product_colors(*, color:colors(*)))
+  id,
+  category_id,
+  subcategory_id,
+  brand_id,
+  name,
+  gender,
+  slug,
+  model_no,
+  description,
+  sku,
+  is_active,
+  created_at,
+  updated_at,
+  category:categories(id, name, slug),
+  subcategory:subcategories(id, name, slug),
+  brand:brands(id, name, slug, logo),
+  product_images(id, product_id, color_id, image_url, is_primary, sort_order, is_active),
+  product_sizes(id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)),
+  product_colors(id, product_id, color_id, color:colors(id, name, hex_code)),
+  inventory(id, product_id, product_size_id, product_color_id, quantity, reserved_quantity, reorder_level, warehouse_location)
 `
 
 export interface ProductFilters {
@@ -38,49 +50,46 @@ export const productsService = {
     let query = supabase
       .from('products')
       .select(`
-        *,
-        category:categories(*),
-        subcategory:subcategories(*),
-        brand:brands(*),
-        product_images!inner(*),
-        product_sizes(*, size:sizes(*)),
-        product_colors(*, color:colors(*))
-      `, { count: 'exact' })
-
-    // Make product_images not inner join for products without images
-    let query2 = supabase
-      .from('products')
-      .select(`
-        *,
-        category:categories(*),
-        subcategory:subcategories(*),
-        brand:brands(*),
-        product_images(*),
-        product_sizes(*, size:sizes(*)),
-        inventory(*)
+        id,
+        category_id,
+        subcategory_id,
+        brand_id,
+        name,
+        gender,
+        slug,
+        model_no,
+        sku,
+        is_active,
+        created_at,
+        category:categories(id, name, slug),
+        subcategory:subcategories(id, name, slug),
+        brand:brands(id, name, slug),
+        product_images(id, image_url, is_primary, sort_order),
+        product_sizes(id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)),
+        inventory(id, product_size_id, quantity, reserved_quantity)
       `, { count: 'exact' })
 
     if (search) {
-      query2 = query2.or(`name.ilike.%${search}%,sku.ilike.%${search}%,model_no.ilike.%${search}%`)
+      query = query.or(`name.ilike.%${search}%,sku.ilike.%${search}%,model_no.ilike.%${search}%`)
     }
-    if (categoryId) query2 = query2.eq('category_id', categoryId)
-    if (subcategoryId) query2 = query2.eq('subcategory_id', subcategoryId)
-    if (brandId) query2 = query2.eq('brand_id', brandId)
-    if (gender) query2 = query2.eq('gender', gender)
-    if (isActive !== undefined) query2 = query2.eq('is_active', isActive)
+    if (categoryId) query = query.eq('category_id', categoryId)
+    if (subcategoryId) query = query.eq('subcategory_id', subcategoryId)
+    if (brandId) query = query.eq('brand_id', brandId)
+    if (gender) query = query.eq('gender', gender)
+    if (isActive !== undefined) query = query.eq('is_active', isActive)
 
     // Sort
-    if (sortBy === 'name') query2 = query2.order('name')
-    else if (sortBy === 'created_at') query2 = query2.order('created_at', { ascending: false })
-    else query2 = query2.order('created_at', { ascending: false })
+    if (sortBy === 'name') query = query.order('name')
+    else if (sortBy === 'created_at') query = query.order('created_at', { ascending: false })
+    else query = query.order('created_at', { ascending: false })
 
     // Pagination
     const from = (page - 1) * pageSize
-    query2 = query2.range(from, from + pageSize - 1)
+    query = query.range(from, from + pageSize - 1)
 
-    const { data, error, count } = await query2
+    const { data, error, count } = await query
     if (error) throw error
-    return { data: data || [], count: count || 0 }
+    return { data: (data as unknown as Product[]) || [], count: count || 0 }
   },
 
   async getBySlug(slug: string): Promise<Product | null> {
@@ -91,7 +100,7 @@ export const productsService = {
       .eq('is_active', true)
       .single()
     if (error) return null
-    return data
+    return data as unknown as Product
   },
 
   async getById(id: number): Promise<Product | null> {
@@ -101,30 +110,44 @@ export const productsService = {
       .eq('id', id)
       .single()
     if (error) return null
-    return data
+    return data as unknown as Product
   },
 
   async getByCategory(categoryId: number, limit = 12): Promise<Product[]> {
     const { data, error } = await supabase
       .from('products')
-      .select('*, category:categories(*), brand:brands(*), product_images(*), product_sizes(*), inventory(*)')
+      .select(`
+        id, category_id, subcategory_id, brand_id, name, gender, slug, is_active, created_at,
+        category:categories(id, name, slug),
+        brand:brands(id, name, slug),
+        product_images(id, image_url, is_primary, sort_order),
+        product_sizes(id, product_id, size_id, price, mrp, is_active),
+        inventory(id, product_size_id, quantity, reserved_quantity)
+      `)
       .eq('category_id', categoryId)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(limit)
     if (error) throw error
-    return data || []
+    return (data as unknown as Product[]) || []
   },
 
   async getFeatured(limit = 8): Promise<Product[]> {
     const { data, error } = await supabase
       .from('products')
-      .select('*, category:categories(*), brand:brands(*), product_images(*), product_sizes(*), inventory(*)')
+      .select(`
+        id, category_id, subcategory_id, brand_id, name, gender, slug, is_active, created_at,
+        category:categories(id, name, slug),
+        brand:brands(id, name, slug),
+        product_images(id, image_url, is_primary, sort_order),
+        product_sizes(id, product_id, size_id, price, mrp, is_active),
+        inventory(id, product_size_id, quantity, reserved_quantity)
+      `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(limit)
     if (error) throw error
-    return data || []
+    return (data as unknown as Product[]) || []
   },
 
   async create(product: Omit<Product, 'id' | 'created_at' | 'updated_at' | 'category' | 'subcategory' | 'brand' | 'product_images' | 'product_sizes' | 'product_colors' | 'inventory'>): Promise<Product> {
@@ -134,7 +157,7 @@ export const productsService = {
       .select()
       .single()
     if (error) throw error
-    return data
+    return data as unknown as Product
   },
 
   async update(id: number, product: Partial<Product>): Promise<Product> {
@@ -147,7 +170,7 @@ export const productsService = {
       .select()
       .single()
     if (error) throw error
-    return data
+    return data as unknown as Product
   },
 
   async delete(id: number): Promise<void> {
@@ -170,7 +193,7 @@ export const productsService = {
     // Check if this product already has this size
     const { data: existing, error: findError } = await supabase
       .from('product_sizes')
-      .select('*, size:sizes(*)')
+      .select('id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)')
       .eq('product_id', productId)
       .eq('size_id', Number(size.size_id))
       .maybeSingle()
@@ -188,12 +211,12 @@ export const productsService = {
           is_active: size.is_active,
         })
         .eq('id', existing.id)
-        .select('*, size:sizes(*)')
+        .select('id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)')
         .single()
 
       if (error) throw error
 
-      results.push(data)
+      results.push(data as unknown as ProductSize)
     } else {
       // INSERT only new product size
       const { data, error } = await supabase
@@ -206,12 +229,12 @@ export const productsService = {
           sku: size.sku || null,
           is_active: size.is_active,
         })
-        .select('*, size:sizes(*)')
+        .select('id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)')
         .single()
 
       if (error) throw error
 
-      results.push(data)
+      results.push(data as unknown as ProductSize)
     }
   }
 
@@ -231,7 +254,7 @@ export const productsService = {
   for (const colorId of colorIds) {
     const { data: existing, error: findError } = await supabase
       .from('product_colors')
-      .select('*')
+      .select('id, product_id, color_id')
       .eq('product_id', productId)
       .eq('color_id', Number(colorId))
       .maybeSingle()
@@ -250,7 +273,7 @@ export const productsService = {
         product_id: productId,
         color_id: Number(colorId),
       })
-      .select('*')
+      .select('id, product_id, color_id')
       .single()
 
     if (error) throw error

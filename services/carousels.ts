@@ -2,8 +2,15 @@ import { supabase, uploadFile, deleteFile, pathFromUrl, STORAGE_BUCKETS } from '
 import type { CarouselItem } from '@/types/database'
 
 const CAROUSEL_SELECT = `
-  *,
-  brand:brands(*)
+  id,
+  title,
+  image_url,
+  brand_id,
+  sort_order,
+  is_active,
+  created_at,
+  updated_at,
+  brand:brands(id, name, slug)
 `
 
 export const carouselsService = {
@@ -15,7 +22,7 @@ export const carouselsService = {
       .order('sort_order', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data as unknown as CarouselItem[]) || []
   },
 
   // Get only active carousel slides (storefront)
@@ -27,7 +34,7 @@ export const carouselsService = {
       .order('sort_order', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data as unknown as CarouselItem[]) || []
   },
 
   // Get single carousel item by ID
@@ -39,7 +46,7 @@ export const carouselsService = {
       .single()
 
     if (error) return null
-    return data
+    return data as unknown as CarouselItem
   },
 
   // Create a new carousel item
@@ -82,7 +89,7 @@ export const carouselsService = {
       .single()
 
     if (error) throw error
-    return data
+    return data as unknown as CarouselItem
   },
 
   // Update an existing carousel item
@@ -126,7 +133,7 @@ export const carouselsService = {
       .single()
 
     if (error) throw error
-    return data
+    return data as unknown as CarouselItem
   },
 
   // Delete a carousel item

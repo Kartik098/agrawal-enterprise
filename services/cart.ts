@@ -2,10 +2,16 @@ import { supabase } from '@/lib/supabase'
 import type { Cart, Wishlist } from '@/types/database'
 
 const CART_SELECT = `
-  *,
-  product:products(id, name, slug, product_images(*)),
-  product_size:product_sizes(*, size:sizes(*)),
-  product_color:product_colors(*, color:colors(*))
+  id,
+  user_id,
+  product_id,
+  product_size_id,
+  product_color_id,
+  quantity,
+  created_at,
+  product:products(id, name, slug, product_images(id, image_url, is_primary)),
+  product_size:product_sizes(id, product_id, size_id, price, mrp, sku, is_active, size:sizes(id, name, sort_order)),
+  product_color:product_colors(id, product_id, color_id, color:colors(id, name, hex_code))
 `
 
 export const cartService = {
@@ -16,7 +22,7 @@ export const cartService = {
       .eq('user_id', userId)
       .order('created_at')
     if (error) throw error
-    return data || []
+    return (data as unknown as Cart[]) || []
   },
 
   async add(userId: string, productId: number, productSizeId: number, productColorId: number | null, qty = 1): Promise<Cart> {
@@ -37,7 +43,7 @@ export const cartService = {
         .select(CART_SELECT)
         .single()
       if (error) throw error
-      return data
+      return data as unknown as Cart
     }
 
     const { data, error } = await supabase
@@ -46,7 +52,7 @@ export const cartService = {
       .select(CART_SELECT)
       .single()
     if (error) throw error
-    return data
+    return data as unknown as Cart
   },
 
   async updateQty(id: number, quantity: number): Promise<void> {
@@ -77,11 +83,24 @@ export const wishlistService = {
   async get(userId: string): Promise<Wishlist[]> {
     const { data, error } = await supabase
       .from('wishlist')
-      .select('*, product:products(*, product_images(*), product_sizes(*, size:sizes(*)))')
+      .select(`
+        id,
+        user_id,
+        product_id,
+        created_at,
+        product:products(
+          id,
+          name,
+          slug,
+          is_active,
+          product_images(id, image_url, is_primary),
+          product_sizes(id, price, mrp, is_active, size:sizes(id, name))
+        )
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
     if (error) throw error
-    return data || []
+    return (data as unknown as Wishlist[]) || []
   },
 
   async add(userId: string, productId: number): Promise<void> {

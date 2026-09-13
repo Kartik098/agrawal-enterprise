@@ -3,19 +3,19 @@ import type { Size, Color } from '@/types/database'
 
 export const sizesService = {
   async getAll(): Promise<Size[]> {
-    const { data, error } = await supabase.from('sizes').select('*').order('sort_order')
+    const { data, error } = await supabase.from('sizes').select('id, name, sort_order').order('sort_order')
     if (error) throw error
     return data || []
   },
 
   async create(name: string, sortOrder = 0): Promise<Size> {
-    const { data, error } = await supabase.from('sizes').insert({ name, sort_order: sortOrder }).select().single()
+    const { data, error } = await supabase.from('sizes').insert({ name, sort_order: sortOrder }).select('id, name, sort_order').single()
     if (error) throw error
     return data
   },
 
   async update(id: number, updates: Partial<Size>): Promise<Size> {
-    const { data, error } = await supabase.from('sizes').update(updates).eq('id', id).select().single()
+    const { data, error } = await supabase.from('sizes').update(updates).eq('id', id).select('id, name, sort_order').single()
     if (error) throw error
     return data
   },
@@ -28,7 +28,7 @@ export const sizesService = {
 
 export const colorsService = {
   async getAll(): Promise<Color[]> {
-    const { data, error } = await supabase.from('colors').select('*').order('name')
+    const { data, error } = await supabase.from('colors').select('id, name, hex_code').order('name')
     if (error) throw error
     return data || []
   },

@@ -98,7 +98,7 @@ export default function ProductsPage() {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-blue-500">Category</label>
-                <select value={categoryId || ''} onChange={e => { setCategoryId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
+                <select value={categoryId || ''} onChange={e => { setCategoryId(e.target.value ? (e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
                   <option value="">All categories</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>

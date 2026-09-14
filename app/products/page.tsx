@@ -106,7 +106,7 @@ export default function ProductsPage() {
               {subcategories.length > 0 && (
                 <div>
                   <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-blue-500">Subcategory</label>
-                  <select value={subcategoryId || ''} onChange={e => { setSubcategoryId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
+                  <select value={subcategoryId || ''} onChange={e => { setSubcategoryId(e.target.value ? (e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
                     <option value="">All subcategories</option>
                     {subcategories.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
@@ -114,7 +114,7 @@ export default function ProductsPage() {
               )}
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-blue-500">Brand</label>
-                <select value={brandId || ''} onChange={e => { setBrandId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
+                <select value={brandId || ''} onChange={e => { setBrandId(e.target.value ? (e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2.5 text-sm text-blue-700 focus:border-orange-400">
                   <option value="">All brands</option>
                   {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                 </select>

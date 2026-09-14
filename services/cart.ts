@@ -25,37 +25,68 @@ export const cartService = {
     return (data as unknown as Cart[]) || []
   },
 
-  async add(userId: string, productId: number, productSizeId: number, productColorId: number | null, qty = 1): Promise<Cart> {
-    // Check if item already in cart — if so, increment qty
-    const { data: existing } = await supabase
-      .from('cart')
-      .select('id, quantity')
-      .eq('user_id', userId)
-      .eq('product_id', productId)
-      .eq('product_size_id', productSizeId)
-      .maybeSingle()
+  async add(
+  userId: string,
+  productId: string,
+  productSizeId: string,
+  productColorId: string | null,
+  qty = 1
+): Promise<Cart> {
+  // Find existing cart item for the EXACT variant
+  let query = supabase
+    .from('cart')
+    .select('id, quantity')
+    .eq('user_id', userId)
+    .eq('product_id', productId)
+    .eq('product_size_id', productSizeId)
 
-    if (existing) {
-      const { data, error } = await supabase
-        .from('cart')
-        .update({ quantity: existing.quantity + qty })
-        .eq('id', existing.id)
-        .select(CART_SELECT)
-        .single()
-      if (error) throw error
-      return data as unknown as Cart
-    }
+  if (productColorId === null) {
+    query = query.is('product_color_id', null)
+  } else {
+    query = query.eq('product_color_id', productColorId)
+  }
 
+  const { data: existing, error: existingError } = await query.maybeSingle()
+
+  if (existingError) {
+    throw existingError
+  }
+
+  // Same exact variant already exists → increase quantity
+  if (existing) {
     const { data, error } = await supabase
       .from('cart')
-      .insert({ user_id: userId, product_id: productId, product_size_id: productSizeId, product_color_id: productColorId, quantity: qty })
+      .update({
+        quantity: existing.quantity + qty,
+      })
+      .eq('id', existing.id)
       .select(CART_SELECT)
       .single()
-    if (error) throw error
-    return data as unknown as Cart
-  },
 
-  async updateQty(id: number, quantity: number): Promise<void> {
+    if (error) throw error
+
+    return data as unknown as Cart
+  }
+
+  // Different variant → create a new cart row
+  const { data, error } = await supabase
+    .from('cart')
+    .insert({
+      user_id: userId,
+      product_id: productId,
+      product_size_id: productSizeId,
+      product_color_id: productColorId,
+      quantity: qty,
+    })
+    .select(CART_SELECT)
+    .single()
+
+  if (error) throw error
+
+  return data as unknown as Cart
+},
+
+  async updateQty(id: string, quantity: number): Promise<void> {
     if (quantity <= 0) {
       await this.remove(id)
       return
@@ -64,7 +95,7 @@ export const cartService = {
     if (error) throw error
   },
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const { error } = await supabase.from('cart').delete().eq('id', id)
     if (error) throw error
   },
@@ -103,14 +134,14 @@ export const wishlistService = {
     return (data as unknown as Wishlist[]) || []
   },
 
-  async add(userId: string, productId: number): Promise<void> {
+  async add(userId: string, productId: string): Promise<void> {
     const { error } = await supabase
       .from('wishlist')
       .upsert({ user_id: userId, product_id: productId })
     if (error) throw error
   },
 
-  async remove(userId: string, productId: number): Promise<void> {
+  async remove(userId: string, productId: string): Promise<void> {
     const { error } = await supabase
       .from('wishlist')
       .delete()
@@ -119,7 +150,7 @@ export const wishlistService = {
     if (error) throw error
   },
 
-  async isWishlisted(userId: string, productId: number): Promise<boolean> {
+  async isWishlisted(userId: string, productId: string): Promise<boolean> {
     const { data } = await supabase
       .from('wishlist')
       .select('id')

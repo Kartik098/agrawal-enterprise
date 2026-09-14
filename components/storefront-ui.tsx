@@ -28,11 +28,11 @@ const PLACEHOLDER_TONES = [
   'bg-orange-50',
 ]
 
-export function getPlaceholderTone(id: number) {
+export function getPlaceholderTone(id: string) {
   return PLACEHOLDER_TONES[id % PLACEHOLDER_TONES.length]
 }
 
-export function getPlaceholderEmoji(id: number) {
+export function getPlaceholderEmoji(id: string) {
   return PLACEHOLDER_EMOJIS[id % PLACEHOLDER_EMOJIS.length]
 }
 

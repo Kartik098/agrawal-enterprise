@@ -20,7 +20,7 @@ export default function WishlistPage() {
     else if (!loading) setWLoading(false)
   }, [user, loading])
 
-  async function remove(productId: number) {
+  async function remove(productId: string) {
     if (!user) return
     await wishlistService.remove(user.id, productId)
     setWishlist(w => w.filter(i => i.product_id !== productId))

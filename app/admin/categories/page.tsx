@@ -20,7 +20,7 @@ export default function AdminCategoriesPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [mutatingId, setMutatingId] = useState<number | null>(null)
+  const [mutatingId, setMutatingId] = useState<string | null>(null)
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(count / PAGE_SIZE)), [count])

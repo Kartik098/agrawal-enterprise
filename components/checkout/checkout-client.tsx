@@ -43,7 +43,7 @@ export function CheckoutClient() {
 
   const subtotal = cart.reduce((s, i) => s + (i.product_size?.price || 0) * i.quantity, 0)
   const discount = coupon ? couponsService.calculateDiscount(coupon, subtotal) : 0
-  const delivery = (subtotal - discount) >= 999 ? 0 : 99
+  const delivery = (subtotal - discount) >= 999 ? 0 : 0
   const total = subtotal - discount + delivery
 
   async function applyCoupon() {
@@ -122,12 +122,14 @@ export function CheckoutClient() {
               setPlaced(true)
               setPlacing(false)
             } else {
+              debugger
               // Verification failed
               setError(verification.error || 'Payment verification failed. Please contact support.')
               setPlacing(false)
             }
           } catch (verifyErr: any) {
             console.error('Verification error:', verifyErr)
+            debugger
             setError(verifyErr.message || 'Failed to verify payment. Please contact support.')
             setPlacing(false)
           }

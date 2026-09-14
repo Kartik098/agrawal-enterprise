@@ -24,7 +24,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
-    ordersService.getById(Number(id)).then(o => {
+    ordersService.getById(id).then(o => {
       setOrder(o); if (o) setStatus(o.status)
     }).finally(() => setLoading(false))
   }, [id])
@@ -32,7 +32,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
   async function updateStatus() {
     setSaving(true)
     try {
-      await ordersService.updateStatus(Number(id), status)
+      await ordersService.updateStatus(id, status)
       setToast({ msg: 'Order status updated', type: 'success' })
       setOrder(o => o ? { ...o, status } : o)
     } catch { setToast({ msg: 'Failed to update', type: 'error' }) }

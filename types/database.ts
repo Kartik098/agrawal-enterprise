@@ -1,7 +1,7 @@
 // Database types matching the backend schema exactly
 
 export interface Category {
-  id: number
+  id: string
   name: string
   slug: string
   description: string | null
@@ -12,8 +12,8 @@ export interface Category {
 }
 
 export interface Subcategory {
-  id: number
-  category_id: number
+  id: string
+  category_id: string
   name: string
   slug: string
   description: string | null
@@ -25,7 +25,7 @@ export interface Subcategory {
 }
 
 export interface Brand {
-  id: number
+  id: string
   name: string
   slug: string
   logo: string | null
@@ -36,22 +36,22 @@ export interface Brand {
 }
 
 export interface Size {
-  id: number
+  id: string
   name: string
   sort_order: number
 }
 
 export interface Color {
-  id: number
+  id: string
   name: string
   hex_code: string | null
 }
 
 export interface Product {
-  id: number
-  category_id: number
-  subcategory_id: number | null
-  brand_id: number | null
+  id: string
+  category_id: string
+  subcategory_id: string | null
+  brand_id: string | null
   name: string
   gender: 'Men' | 'Women' | 'Kids' | 'Unisex'
   slug: string
@@ -61,6 +61,7 @@ export interface Product {
   is_active: boolean
   created_at: string
   updated_at: string
+
   // Relations
   category?: Category
   subcategory?: Subcategory
@@ -72,9 +73,9 @@ export interface Product {
 }
 
 export interface ProductSize {
-  id: number
-  product_id: number
-  size_id: number
+  id: string
+  product_id: string
+  size_id: string
   price: number
   mrp: number
   sku: string | null
@@ -83,16 +84,16 @@ export interface ProductSize {
 }
 
 export interface ProductColor {
-  id: number
-  product_id: number
-  color_id: number
+  id: string
+  product_id: string
+  color_id: string
   color?: Color
 }
 
 export interface ProductImage {
-  id: number
-  product_id: number
-  color_id: number | null
+  id: string
+  product_id: string
+  color_id: string | null
   image_url: string
   is_primary: boolean
   sort_order: number
@@ -101,16 +102,17 @@ export interface ProductImage {
 }
 
 export interface Inventory {
-  id: number
-  product_id: number
-  product_size_id: number
-  product_color_id: number | null
+  id: string
+  product_id: string
+  product_size_id: string
+  product_color_id: string | null
   quantity: number
   reserved_quantity: number
   reorder_level: number
   warehouse_location: string | null
   created_at: string
   updated_at: string
+
   product?: Product
   product_size?: ProductSize & { size?: Size }
   product_color?: ProductColor & { color?: Color }
@@ -128,7 +130,7 @@ export interface User {
 }
 
 export interface Address {
-  id: number
+  id: string
   user_id: string
   label: string
   full_name: string
@@ -143,28 +145,32 @@ export interface Address {
 }
 
 export interface Cart {
-  id: number
+  id: string
   user_id: string
-  product_id: number
-  product_size_id: number
-  product_color_id: number | null
+  product_id: string
+  product_size_id: string
+  product_color_id: string | null
   quantity: number
   created_at: string
+
   product?: Product
   product_size?: ProductSize & { size?: Size }
   product_color?: ProductColor & { color?: Color }
 }
 
 export interface Wishlist {
-  id: number
+  id: string
   user_id: string
-  product_id: number
+  product_id: string
   created_at: string
-  product?: Product & { product_images?: ProductImage[] }
+
+  product?: Product & {
+    product_images?: ProductImage[]
+  }
 }
 
 export interface Coupon {
-  id: number
+  id: string
   code: string
   discount_type: 'percentage' | 'fixed'
   discount_value: number
@@ -178,11 +184,17 @@ export interface Coupon {
 }
 
 export interface Order {
-  id: number
+  id: string
   user_id: string
-  address_id: number
-  coupon_id: number | null
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned'
+  address_id: string
+  coupon_id: string | null
+  status:
+    | 'pending'
+    | 'processing'
+    | 'shipped'
+    | 'delivered'
+    | 'cancelled'
+    | 'returned'
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded'
   payment_method: string | null
   payment_id: string | null
@@ -193,6 +205,7 @@ export interface Order {
   notes: string | null
   created_at: string
   updated_at: string
+
   user?: User
   address?: Address
   coupon?: Coupon
@@ -200,34 +213,45 @@ export interface Order {
 }
 
 export interface OrderItem {
-  id: number
-  order_id: number
-  product_id: number
-  product_size_id: number
-  product_color_id: number | null
+  id: string
+  order_id: string
+  product_id: string
+  product_size_id: string
+  product_color_id: string | null
   quantity: number
   unit_price: number
   total_price: number
-  product?: Product & { product_images?: ProductImage[] }
-  product_size?: ProductSize & { size?: Size }
-  product_color?: ProductColor & { color?: Color }
+
+  product?: Product & {
+    product_images?: ProductImage[]
+  }
+
+  product_size?: ProductSize & {
+    size?: Size
+  }
+
+  product_color?: ProductColor & {
+    color?: Color
+  }
 }
 
 export interface Review {
-  id: number
+  id: string
   user_id: string
-  product_id: number
-  order_item_id: number | null
+  product_id: string
+  order_item_id: string | null
   rating: number
   title: string | null
   body: string | null
   is_approved: boolean
   created_at: string
+
   user?: User
   product?: Product
 }
 
 // Analytics types
+
 export interface DashboardStats {
   total_revenue: number
   total_orders: number
@@ -238,8 +262,9 @@ export interface DashboardStats {
 }
 
 // Storefront Videos
+
 export interface Video {
-  id: number
+  id: string
   slot: number
   video_url: string
   source_type: 'upload' | 'url'
@@ -264,7 +289,7 @@ export interface Notification {
   title: string
   message: string
   entity_type: string | null
-  entity_id: number | null
+  entity_id: string | null
   is_read: boolean
   created_at: string
   read_at: string | null
@@ -282,16 +307,14 @@ export interface PushSubscriptionRecord {
 }
 
 export interface CarouselItem {
-  id: number
+  id: string
   title: string | null
   image_url: string
-  brand_id: number | null
+  brand_id: string | null
   sort_order: number
   is_active: boolean
   created_at: string
   updated_at: string
+
   brand?: Brand
 }
-
-
-

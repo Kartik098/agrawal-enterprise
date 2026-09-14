@@ -186,16 +186,33 @@ export async function POST(req: NextRequest) {
 
     // 3. Decrement inventory for each item
     for (const item of order_data.cartItems) {
-      const { error: invErr } = await supabase.rpc('decrement_inventory', {
-        p_product_size_id: item.product_size_id,
-        p_quantity: item.quantity,
-      })
-
-      if (invErr) {
-        console.error('Failed to decrement inventory:', invErr)
-        // Don't fail the order if inventory update fails
-      }
+  const { data: inventoryUpdated, error: invErr } = await supabase.rpc(
+    'decrement_inventory',
+    {
+      p_product_id: item.product_id,
+      p_product_size_id: item.product_size_id,
+      p_product_color_id: item.product_color_id ?? null,
+      p_quantity: item.quantity,
     }
+  )
+
+  if (invErr || !inventoryUpdated) {
+    console.error('Failed to decrement inventory:', {
+      item,
+      error: invErr,
+    })
+
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          invErr?.message ||
+          'Unable to update inventory. The selected item may be out of stock.',
+      },
+      { status: 409 }
+    )
+  }
+}
 
     // 4. Increment coupon used_count
     if (order_data.couponId) {
@@ -308,7 +325,7 @@ export async function POST(req: NextRequest) {
  * Send admin notification email about new order
  */
 async function sendOrderNotificationToAdmin(
-  orderId: number,
+  orderId: string,
   userId: string,
   totalAmount: number,
   itemCount: number

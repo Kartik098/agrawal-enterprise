@@ -14,13 +14,13 @@ export const sizesService = {
     return data
   },
 
-  async update(id: number, updates: Partial<Size>): Promise<Size> {
+  async update(id: string, updates: Partial<Size>): Promise<Size> {
     const { data, error } = await supabase.from('sizes').update(updates).eq('id', id).select('id, name, sort_order').single()
     if (error) throw error
     return data
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const { error } = await supabase.from('sizes').delete().eq('id', id)
     if (error) throw error
   },
@@ -39,13 +39,13 @@ export const colorsService = {
     return data
   },
 
-  async update(id: number, updates: Partial<Color>): Promise<Color> {
+  async update(id: string, updates: Partial<Color>): Promise<Color> {
     const { data, error } = await supabase.from('colors').update(updates).eq('id', id).select().single()
     if (error) throw error
     return data
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const { error } = await supabase.from('colors').delete().eq('id', id)
     if (error) throw error
   },

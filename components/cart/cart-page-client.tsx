@@ -31,13 +31,13 @@ export function CartPageClient() {
     </div>
   )
 
-  async function updateQty(id: number, delta: number, current: number) {
+  async function updateQty(id: string, delta: number, current: number) {
     setUpdating(id)
     await cartService.updateQty(id, current + delta)
     await refetch()
     setUpdating(null)
   }
-  async function removeItem(id: number) {
+  async function removeItem(id: string) {
     setUpdating(id)
     await cartService.remove(id)
     await refetch()
@@ -45,7 +45,7 @@ export function CartPageClient() {
   }
 
   const subtotal = cart.reduce((s, i) => s + (i.product_size?.price || 0) * i.quantity, 0)
-  const delivery = subtotal >= 999 ? 0 : 99
+  const delivery = subtotal >= 999 ? 0 : 0
   const total = subtotal + delivery
 
   return (

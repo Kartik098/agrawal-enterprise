@@ -26,7 +26,7 @@ export function Navbar() {
   return (
     <>
       <div className="bg-blue-500 px-4 py-2 text-center text-xs font-semibold tracking-wide text-white">
-        Free delivery on orders over ₹999 · Easy 7-day returns
+        Free delivery · Easy 7-day returns
       </div>
       <header className="sticky top-0 z-40 border-b border-blue-100 bg-white/95 backdrop-blur">
         <div className="section-shell flex h-20 items-center justify-between gap-4">

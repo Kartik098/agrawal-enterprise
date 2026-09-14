@@ -22,7 +22,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const [order, setOrder] = useState<Order | null | undefined>(undefined)
 
   useEffect(() => {
-    if (user) ordersService.getById(Number(id)).then(setOrder)
+    if (user) ordersService.getById(id).then(setOrder)
   }, [user, id])
 
   if (loading || order === undefined) return <><Navbar /><PageLoader /></>

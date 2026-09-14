@@ -22,9 +22,9 @@ export default function AdminProductsPage() {
 
   // Filters
   const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState<number | undefined>()
-  const [subcategoryId, setSubcategoryId] = useState<number | undefined>()
-  const [brandId, setBrandId] = useState<number | undefined>()
+  const [categoryId, setCategoryId] = useState<string | undefined>()
+  const [subcategoryId, setSubcategoryId] = useState<string | undefined>()
+  const [brandId, setBrandId] = useState<string | undefined>()
   const [gender, setGender] = useState<string | undefined>()
   const [isActive, setIsActive] = useState<boolean | undefined>()
   const [page, setPage] = useState(1)
@@ -104,21 +104,21 @@ export default function AdminProductsPage() {
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-blue-500">Category</label>
-                  <select value={categoryId || ''} onChange={e => { setCategoryId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
+                  <select value={categoryId || ''} onChange={e => { setCategoryId(e.target.value ? e.target.value : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
                     <option value="">All</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 {subcategories.length > 0 && (
                   <div>
                     <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-blue-500">Subcategory</label>
-                    <select value={subcategoryId || ''} onChange={e => { setSubcategoryId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
+                    <select value={subcategoryId || ''} onChange={e => { setSubcategoryId(e.target.value ? e.target.value : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
                       <option value="">All</option>{subcategories.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
                   </div>
                 )}
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-blue-500">Brand</label>
-                  <select value={brandId || ''} onChange={e => { setBrandId(e.target.value ? Number(e.target.value) : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
+                  <select value={brandId || ''} onChange={e => { setBrandId(e.target.value ? e.target.value : undefined); setPage(1) }} className="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm text-blue-700 focus:border-orange-400">
                     <option value="">All</option>{brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                   </select>
                 </div>

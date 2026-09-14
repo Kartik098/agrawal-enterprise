@@ -25,7 +25,7 @@ export default function AdminInventoryPage() {
     return edits[inv.id] || { quantity: String(inv.quantity), reorder_level: String(inv.reorder_level) }
   }
 
-  function setEdit(id: number, key: 'quantity' | 'reorder_level', value: string) {
+  function setEdit(id: string, key: 'quantity' | 'reorder_level', value: string) {
     setEdits(e => ({ ...e, [id]: { ...getEdit({ id } as any), [key]: value } }))
   }
 

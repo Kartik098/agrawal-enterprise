@@ -38,7 +38,7 @@ export const carouselsService = {
   },
 
   // Get single carousel item by ID
-  async getById(id: number): Promise<CarouselItem | null> {
+  async getById(id: string): Promise<CarouselItem | null> {
     const { data, error } = await supabase
       .from('carousels')
       .select(CAROUSEL_SELECT)
@@ -94,7 +94,7 @@ export const carouselsService = {
 
   // Update an existing carousel item
   async update(
-    id: number,
+    id: string,
     input: {
       title?: string | null
       imageUrl?: string
@@ -137,7 +137,7 @@ export const carouselsService = {
   },
 
   // Delete a carousel item
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const item = await this.getById(id)
     if (!item) return
 
@@ -158,7 +158,7 @@ export const carouselsService = {
   },
 
   // Reorder carousel slides
-  async reorder(items: { id: number; sort_order: number }[]): Promise<void> {
+  async reorder(items: { id: string; sort_order: number }[]): Promise<void> {
     await Promise.all(
       items.map(({ id, sort_order }) =>
         supabase.from('carousels').update({ sort_order }).eq('id', id)

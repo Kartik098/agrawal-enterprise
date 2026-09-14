@@ -63,7 +63,7 @@ export const analyticsService = {
       }))
   },
 
-  async getTopProducts(limit = 5): Promise<{ product_id: number; name: string; total_sold: number; revenue: number }[]> {
+  async getTopProducts(limit = 5): Promise<{ product_Id: string; name: string; total_sold: number; revenue: number }[]> {
     const { data } = await supabase
       .from('order_items')
       .select('product_id, quantity, total_price, product:products(id, name)')
@@ -79,7 +79,7 @@ export const analyticsService = {
     })
 
     return Object.entries(byProduct)
-      .map(([id, v]) => ({ product_id: Number(id), ...v }))
+      .map(([id, v]) => ({ product_Id: (id), ...v }))
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, limit)
   },

@@ -52,7 +52,7 @@ export const brandsService = {
   },
 
   async update(
-    id: number,
+    id: string,
     brand: Partial<Brand>,
     logoFile?: File
   ): Promise<Brand> {
@@ -79,7 +79,7 @@ export const brandsService = {
     return data
   },
 
-  async removeLogo(id: number, logoUrl: string): Promise<void> {
+  async removeLogo(id: string, logoUrl: string): Promise<void> {
     try {
       await deleteFile(STORAGE_BUCKETS.BRANDS, pathFromUrl(logoUrl, STORAGE_BUCKETS.BRANDS))
     } catch {}
@@ -90,7 +90,7 @@ export const brandsService = {
     if (error) throw error
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const { error } = await supabase.from('brands').delete().eq('id', id)
     if (error) throw error
   },

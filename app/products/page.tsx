@@ -22,9 +22,9 @@ export default function ProductsPage() {
 
   // Filters
   const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState<number | undefined>()
-  const [subcategoryId, setSubcategoryId] = useState<number | undefined>()
-  const [brandId, setBrandId] = useState<number | undefined>()
+  const [categoryId, setCategoryId] = useState<string | undefined>()
+  const [subcategoryId, setSubcategoryId] = useState<string | undefined>()
+  const [brandId, setBrandId] = useState<string | undefined>()
   const [gender, setGender] = useState<string | undefined>()
   const [sort, setSort] = useState('created_at')
   const [page, setPage] = useState(1)

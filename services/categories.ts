@@ -104,7 +104,7 @@ export const categoriesService = {
     return data
   },
 
-  async getCategoryById(id: number): Promise<Category | null> {
+  async getCategoryById(id: string): Promise<Category | null> {
     const { data, error } = await supabase
       .from('categories')
       .select(CATEGORY_COLS)
@@ -144,7 +144,7 @@ export const categoriesService = {
     return data
   },
 
-  async updateCategory(id: number, cat: Partial<CategoryInput>, imageFile?: File): Promise<Category> {
+  async updateCategory(id: string, cat: Partial<CategoryInput>, imageFile?: File): Promise<Category> {
     const { data: current, error: currentError } = await supabase.from('categories').select('image').eq('id', id).single()
     if (currentError) throw currentError
     const oldImage = current.image as string | null
@@ -171,16 +171,16 @@ export const categoriesService = {
     return data
   },
 
-  async toggleCategoryStatus(id: number, isActive: boolean): Promise<Category> {
+  async toggleCategoryStatus(id: string, isActive: boolean): Promise<Category> {
     return this.updateCategory(id, { is_active: isActive })
   },
 
-  async getCategoryReferenceCounts(id: number): Promise<{ subcategory_count: number; product_count: number }> {
+  async getCategoryReferenceCounts(id: string): Promise<{ subcategory_count: number; product_count: number }> {
     const counts = await getReferenceCounts([id])
     return counts.get(id) || { subcategory_count: 0, product_count: 0 }
   },
 
-  async deleteCategory(id: number): Promise<void> {
+  async deleteCategory(id: string): Promise<void> {
     const counts = await this.getCategoryReferenceCounts(id)
     if (counts.subcategory_count > 0 || counts.product_count > 0) {
       throw new Error('This category has products or subcategories. Deactivate it instead.')
@@ -194,11 +194,11 @@ export const categoriesService = {
     return this.createCategory(cat, imageFile)
   },
 
-  update(id: number, cat: Partial<CategoryInput>, imageFile?: File): Promise<Category> {
+  update(id: string, cat: Partial<CategoryInput>, imageFile?: File): Promise<Category> {
     return this.updateCategory(id, cat, imageFile)
   },
 
-  delete(id: number): Promise<void> {
+  delete(id: string): Promise<void> {
     return this.deleteCategory(id)
   },
 }
@@ -213,7 +213,7 @@ export const subcategoriesService = {
     return (data as unknown as Subcategory[]) || []
   },
 
-  async getByCategory(categoryId: number): Promise<Subcategory[]> {
+  async getByCategory(categoryId: string): Promise<Subcategory[]> {
     const { data, error } = await supabase
       .from('subcategories')
       .select(SUBCATEGORY_COLS)
@@ -244,7 +244,7 @@ export const subcategoriesService = {
     return data as unknown as Subcategory
   },
 
-  async update(id: number, sub: Partial<Subcategory>, imageFile?: File): Promise<Subcategory> {
+  async update(id: string, sub: Partial<Subcategory>, imageFile?: File): Promise<Subcategory> {
     const { data: current, error: currentError } = await supabase.from('subcategories').select('image').eq('id', id).single()
     if (currentError) throw currentError
     const oldImage = current.image as string | null
@@ -271,7 +271,7 @@ export const subcategoriesService = {
     return data as unknown as Subcategory
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const { error } = await supabase.from('subcategories').delete().eq('id', id)
     if (error) throw error
   },

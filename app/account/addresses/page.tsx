@@ -17,7 +17,7 @@ export default function AddressesPage() {
   const { user, loading } = useAuth()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [adding, setAdding] = useState(false)
-  const [editId, setEditId] = useState<number | null>(null)
+  const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ ...BLANK })
   const [saving, setSaving] = useState(false)
 
@@ -51,13 +51,13 @@ export default function AddressesPage() {
     setEditId(addr.id); setAdding(true)
   }
 
-  async function remove(id: number) {
+  async function remove(id: string) {
     if (!confirm('Remove this address?')) return
     await addressesService.delete(id)
     setAddresses(a => a.filter(x => x.id !== id))
   }
 
-  async function setDefault(id: number) {
+  async function setDefault(id: string) {
     if (!user) return
     await addressesService.setDefault(id, user.id)
     setAddresses(a => a.map(x => ({ ...x, is_default: x.id === id })))

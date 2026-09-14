@@ -37,7 +37,7 @@ const ORDER_SELECT = `
 
 export interface PlaceOrderInput {
   userId: string
-  addressId: number
+  addressId: string
   couponId?: number
   cartItems: Cart[]
   subtotal: number
@@ -70,7 +70,7 @@ export const ordersService = {
     return (data as unknown as Order[]) || []
   },
 
-  async getById(id: number): Promise<Order | null> {
+  async getById(id: string): Promise<Order | null> {
     const { data, error } = await supabase
       .from('orders')
       .select(ORDER_SELECT)
@@ -131,7 +131,7 @@ export const ordersService = {
     return order as unknown as Order
   },
 
-  async updateStatus(id: number, status: Order['status']): Promise<void> {
+  async updateStatus(id: string, status: Order['status']): Promise<void> {
     const { error } = await supabase
       .from('orders')
       .update({ status, updated_at: new Date().toISOString() })
@@ -139,7 +139,7 @@ export const ordersService = {
     if (error) throw error
   },
 
-  async updatePaymentStatus(id: number, paymentStatus: Order['payment_status'], paymentId?: string): Promise<void> {
+  async updatePaymentStatus(id: string, paymentStatus: Order['payment_status'], paymentId?: string): Promise<void> {
     const { error } = await supabase
       .from('orders')
       .update({ payment_status: paymentStatus, payment_id: paymentId || null, updated_at: new Date().toISOString() })

@@ -83,7 +83,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentOrders, setRecentOrders] = useState<Order[]>([])
   const [monthlyRevenue, setMonthlyRevenue] = useState<{ month: string; revenue: number }[]>([])
-  const [topProducts, setTopProducts] = useState<{ product_id: number; name: string; revenue: number; total_sold: number }[]>([])
+  const [topProducts, setTopProducts] = useState<{ product_Id: string; name: string; revenue: number; total_sold: number }[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

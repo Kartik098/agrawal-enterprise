@@ -109,7 +109,7 @@ export const addressesService = {
     return data
   },
 
-  async update(id: number, userId: string, updates: Partial<Address>): Promise<Address> {
+  async update(id: string, userId: string, updates: Partial<Address>): Promise<Address> {
     if (updates.is_default) {
       await supabase.from('addresses').update({ is_default: false }).eq('user_id', userId)
     }
@@ -123,12 +123,12 @@ export const addressesService = {
     return data
   },
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const { error } = await supabase.from('addresses').delete().eq('id', id)
     if (error) throw error
   },
 
-  async setDefault(id: number, userId: string): Promise<void> {
+  async setDefault(id: string, userId: string): Promise<void> {
     await supabase.from('addresses').update({ is_default: false }).eq('user_id', userId)
     await supabase.from('addresses').update({ is_default: true }).eq('id', id)
   },

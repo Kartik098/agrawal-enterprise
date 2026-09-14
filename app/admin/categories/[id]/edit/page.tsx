@@ -27,7 +27,7 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
     let cancelled = false
 
     async function loadCategory() {
-      const categoryId = Number(id)
+      const categoryId = id
       if (!Number.isInteger(categoryId) || categoryId <= 0) {
         setError('Invalid category ID')
         setLoading(false)

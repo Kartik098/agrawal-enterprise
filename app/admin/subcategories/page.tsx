@@ -24,7 +24,7 @@ const BLANK = {
   name: '',
   slug: '',
   description: '',
-  category_id: 0,
+  category_id: '',
   is_active: true,
   image: null as string | null,
 }
@@ -39,11 +39,11 @@ function nameToSlug(n: string) {
 type FormRowProps = {
   form: typeof BLANK
   setForm: React.Dispatch<React.SetStateAction<typeof BLANK>>
-  editing: number | null
+  editing: string | null
   categories: Category[]
   save: () => void
   saving: boolean
-  setEditing: React.Dispatch<React.SetStateAction<number | null>>
+  setEditing: React.Dispatch<React.SetStateAction<string | null>>
   setAdding: React.Dispatch<React.SetStateAction<boolean>>
   setImageFile: React.Dispatch<React.SetStateAction<File | null>>
 }
@@ -88,7 +88,7 @@ function FormRow({
           onChange={(e) => {
             setForm((f) => ({
               ...f,
-              category_id: Number(e.target.value),
+              category_id: (e.target.value),
             }))
           }}
           className="w-full rounded-xl border border-orange-300 px-3 py-2 text-sm outline-none focus:border-orange-500"
@@ -192,7 +192,7 @@ export default function AdminSubcategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
 
-  const [editing, setEditing] = useState<number | null>(null)
+  const [editing, setEditing] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
 
   const [form, setForm] = useState({

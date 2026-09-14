@@ -24,7 +24,7 @@ export default function EditBrandPage({ params }: { params: Promise<{ id: string
 
   useEffect(() => {
     brandsService.getAll().then(all => {
-      const b = all.find(x => x.id === Number(id)) || null
+      const b = all.find(x => x.id === id) || null
       setBrand(b)
       if (b) { setName(b.name); setSlug(b.slug); setDescription(b.description || ''); setIsActive(b.is_active) }
       setLoading(false)

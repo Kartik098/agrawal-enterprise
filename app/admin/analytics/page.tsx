@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/states'
 
 export default function AdminAnalyticsPage() {
   const [monthly, setMonthly] = useState<{ month: string; revenue: number; orders: number }[]>([])
-  const [topProducts, setTopProducts] = useState<{ product_id: number; name: string; revenue: number; total_sold: number }[]>([])
+  const [topProducts, setTopProducts] = useState<{ product_Id: string; name: string; revenue: number; total_sold: number }[]>([])
   const [statusBreakdown, setStatusBreakdown] = useState<{ status: string; count: number }[]>([])
   const [categoryRevenue, setCategoryRevenue] = useState<{ category: string; revenue: number }[]>([])
   const [loading, setLoading] = useState(true)

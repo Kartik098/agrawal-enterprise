@@ -23,7 +23,7 @@ export default function AdminCarouselsPage() {
   // Form State
   const [title, setTitle] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [brandId, setBrandId] = useState<number | null>(null)
+  const [brandId, setBrandId] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState(0)
   const [isActive, setIsActive] = useState(true)
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -326,7 +326,7 @@ export default function AdminCarouselsPage() {
                 </label>
                 <select
                   value={brandId || ''}
-                  onChange={e => setBrandId(e.target.value ? Number(e.target.value) : null)}
+                  onChange={e => setBrandId(e.target.value ? e.target.value : null)}
                   className="w-full rounded-xl border border-blue-200 px-4 py-2.5 text-sm font-semibold text-blue-950 outline-none focus:border-orange-400"
                 >
                   <option value="">-- No Brand Linked --</option>

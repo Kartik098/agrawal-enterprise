@@ -59,11 +59,11 @@ export function useProduct(slug: string) {
   return useAsync(() => productsService.getBySlug(slug), [slug])
 }
 
-export function useProductById(id: number | null) {
+export function useProductById(id: string | null) {
   return useAsync(() => id ? productsService.getById(id) : Promise.resolve(null), [id])
 }
 
-export function useCategoryProducts(categoryId: number | null) {
+export function useCategoryProducts(categoryId: string | null) {
   return useAsync(() => categoryId ? productsService.getByCategory(categoryId) : Promise.resolve([]), [categoryId])
 }
 
@@ -110,7 +110,7 @@ export function useInventory() {
   return useAsync(() => inventoryService.getAll())
 }
 
-export function useProductInventory(productId: number | null) {
+export function useProductInventory(productId: string | null) {
   return useAsync(() => productId ? inventoryService.getByProduct(productId) : Promise.resolve([]), [productId])
 }
 

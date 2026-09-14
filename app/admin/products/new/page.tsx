@@ -275,7 +275,10 @@ export default function NewProductPage() {
       })
       return
     }
-
+    console.log('IMAGE COLOR IDS:', images.map((image) => ({
+  colorId: image.colorId,
+  url: image.url,
+})))
     // 2. Subcategory is mandatory
     if (!subcategoryId) {
       setToast({
@@ -484,24 +487,30 @@ export default function NewProductPage() {
           productColor.id
         )
       }
-
+console.log('IMAGE COLOR IDS:', images.map((image) => ({
+  colorId: image.colorId,
+  url: image.url,
+})))
       for (const image of images) {
-        const productColorId =
-          image.colorId !== null &&
-          image.colorId !== undefined
-            ? productColorMap.get(image.colorId) ?? null
-            : null
-
-        await productsService.uploadImage(
-          product.id,
-          image.file,
-          {
-            isPrimary: image.isPrimary,
-            sortOrder: image.sortOrder,
-            colorId: productColorId,
-          }
-        )
-      }
+        console.log('IMAGE DEBUG', {
+  imageColorId: image.colorId,
+  selectedColorIds,
+  productColors,
+})
+  await productsService.uploadImage(
+    product.id,
+    image.file,
+    {
+      isPrimary: image.isPrimary,
+      sortOrder: image.sortOrder,
+      colorId:
+        image.colorId !== null &&
+        image.colorId !== undefined
+          ? image.colorId
+          : null,
+    }
+  )
+}
 
       setToast({
         msg: 'Product created!',

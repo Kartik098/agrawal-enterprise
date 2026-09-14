@@ -40,9 +40,7 @@ export default function AccountPage() {
   const menuItems = [
     { icon: Package, label: 'My Orders', desc: 'Track and manage your orders', href: '/account/orders', count: orders.length },
     { icon: Bell, label: 'Notifications', desc: 'View updates and alerts', href: '/account/notifications', count: null },
-    { icon: MapPin, label: 'Addresses', desc: 'Manage delivery addresses', href: '/account/addresses', count: null },
-    { icon: Heart, label: 'Wishlist', desc: 'Products you have saved', href: '/account/wishlist', count: null },
-    { icon: Settings, label: 'Settings', desc: 'Profile and preferences', href: '/account/settings', count: null },
+    { icon: MapPin, label: 'Addresses', desc: 'Manage delivery addresses', href: '/account/addresses', count: null }
   ]
 
   const displayName = profile?.full_name || user.email || 'Customer'

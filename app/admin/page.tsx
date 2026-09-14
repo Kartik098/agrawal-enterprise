@@ -22,8 +22,7 @@ const NAV_ITEMS = [
   { label: 'Carousel', icon: Images, href: '/admin/carousels' },
   { label: 'Customers', icon: Users, href: '/admin/customers' },
   { label: 'Notifications', icon: Bell, href: '/admin/notifications' },
-  { label: 'Analytics', icon: BarChart3, href: '/admin/analytics' },
-  { label: 'Settings', icon: Settings, href: '/admin/settings' },
+  { label: 'Analytics', icon: BarChart3, href: '/admin/analytics' }
 ]
 
 const STATUS_COLORS: Record<string, string> = {

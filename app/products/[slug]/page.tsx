@@ -488,55 +488,58 @@ export default function ProductDetailPage({
               IMAGE GALLERY
               =================================================== */}
 
-          <div className="grid gap-3 sm:grid-cols-[80px_1fr]">
+          {/* ===================================================
+    IMAGE GALLERY
+    =================================================== */}
 
-            {/* THUMBNAILS */}
+<div
+  className={`grid gap-3 ${
+    images.length > 1
+      ? 'sm:grid-cols-[80px_1fr]'
+      : 'grid-cols-1'
+  }`}
+>
+  {/* THUMBNAILS */}
 
-            {images.length > 1 && (
-              <div className="order-2 flex gap-2 overflow-x-auto sm:order-1 sm:flex-col sm:overflow-y-auto">
+  {images.length > 1 && (
+    <div className="order-2 flex gap-2 overflow-x-auto sm:order-1 sm:flex-col sm:overflow-y-auto">
+      {images.map((img, i) => (
+        <button
+          key={img.id}
+          type="button"
+          onClick={() => setSelectedImageIdx(i)}
+          className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 ${
+            i === safeImageIdx
+              ? 'border-orange-500'
+              : 'border-blue-100 hover:border-orange-300'
+          }`}
+        >
+          <img
+            src={img.image_url}
+            alt={`View ${i + 1}`}
+            className="h-full w-full object-cover"
+          />
+        </button>
+      ))}
+    </div>
+  )}
 
-                {images.map((img, i) => (
-                  <button
-                    key={img.id}
-                    type="button"
-                    onClick={() =>
-                      setSelectedImageIdx(i)
-                    }
-                    className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 ${
-                      i === safeImageIdx
-                        ? 'border-orange-500'
-                        : 'border-blue-100 hover:border-orange-300'
-                    }`}
-                  >
-                    <img
-                      src={img.image_url}
-                      alt={`View ${i + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
+  {/* MAIN IMAGE */}
 
-              </div>
-            )}
-
-            {/* MAIN IMAGE */}
-
-            <div className="order-1 flex min-h-[420px] items-center justify-center overflow-hidden rounded-3xl bg-blue-50 sm:order-2">
-
-              {currentImage ? (
-                <img
-                  src={currentImage.image_url}
-                  alt={product.name}
-                  className="h-full w-full max-h-[520px] object-contain"
-                />
-              ) : (
-                <span className="text-[120px] font-black text-blue-200">
-                  AG
-                </span>
-              )}
-
-            </div>
-          </div>
+  <div className="order-1 flex min-h-[420px] w-full items-center justify-center overflow-hidden rounded-3xl bg-blue-50 sm:order-2">
+    {currentImage ? (
+      <img
+        src={currentImage.image_url}
+        alt={product.name}
+        className="max-h-[520px] h-full w-full object-contain"
+      />
+    ) : (
+      <span className="text-[120px] font-black text-blue-200">
+        AG
+      </span>
+    )}
+  </div>
+</div>
 
           {/* ===================================================
               PRODUCT INFO
